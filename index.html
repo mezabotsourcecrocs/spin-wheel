@@ -278,9 +278,10 @@ let isConnected  = false;
 async function apiCall(params) {
   try {
     const url = SCRIPT_URL + "?" + new URLSearchParams(params).toString();
-    const res = await fetch(url);
+    const res = await fetch(url, { method: "GET", redirect: "follow" });
     if (!res.ok) throw new Error("HTTP " + res.status);
-    return await res.json();
+    const text = await res.text();
+    return JSON.parse(text);
   } catch (err) {
     return { success: false, message: err.toString() };
   }
