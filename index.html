@@ -671,14 +671,26 @@ function showResult(prize, usedCodeForVoucher) {
   const waBtn     = document.getElementById('waBtn');
 
   if (!isTryAgain) {
+    // Hitung expired voucher: 3 minggu dari sekarang
+    const expDate = new Date();
+    expDate.setDate(expDate.getDate() + 21);
+    const expStr = expDate.toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' });
+
+    // Isi voucher
+    document.getElementById('voucherPrize').textContent = prize.label;
+    document.getElementById('voucherExp').textContent   = expStr;
+    document.getElementById('voucherCode').textContent  = usedCodeForVoucher || '—';
+
     const pesan = encodeURIComponent(
       `Halo! Saya baru saja mendapatkan hadiah dari Spin & Win 🎉
 
 ` +
       `🏆 Hadiah: ${prize.label}
+` +
+      `📅 Voucher berlaku hingga: ${expStr}
 
 ` +
-      `Saya sudah screenshot sebagai bukti. Mohon bantu proses klaim hadiah saya ya!`
+      `Saya sudah screenshot voucher sebagai bukti. Mohon bantu proses klaim hadiah saya ya!`
     );
     waBtn.href = `https://wa.me/${WA_NUMBER}?text=${pesan}`;
     waSection.style.display = 'block';
