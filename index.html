@@ -123,9 +123,156 @@
   .admin-divider { height: 1px; background: var(--border); margin: 20px 0; }
   @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fadeUp   { from { opacity: 0; transform: translateY(20px);  } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── S&K OVERLAY ─────────────────────────────────── */
+  .snk-overlay { display: flex; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 999; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+  .snk-box { background: var(--surface); border: 1px solid rgba(255,215,0,0.25); border-radius: 24px; width: 100%; max-width: 480px; max-height: 90vh; display: flex; flex-direction: column; animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both; overflow: hidden; }
+  .snk-header { padding: 24px 28px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .snk-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold); padding: 4px 12px; border-radius: 20px; background: rgba(255,215,0,0.05); margin-bottom: 10px; }
+  .snk-title { font-family: 'Black Han Sans', sans-serif; font-size: 1.6rem; background: linear-gradient(135deg, #FFD700, #FF6B00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .snk-subtitle { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .snk-scroll-wrap { position: relative; flex: 1; overflow: hidden; }
+  .snk-body { padding: 20px 28px; overflow-y: auto; height: 100%; max-height: 340px; font-size: 13px; line-height: 1.8; color: var(--text); }
+  .snk-body h3 { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin: 18px 0 8px; }
+  .snk-body h3:first-child { margin-top: 0; }
+  .snk-body p { color: #C8BCA8; margin-bottom: 8px; }
+  .snk-body ol { padding-left: 18px; color: #C8BCA8; }
+  .snk-body ol li { margin-bottom: 6px; }
+  .snk-scroll-hint { position: absolute; bottom: 0; left: 0; right: 0; height: 48px; background: linear-gradient(to top, var(--surface), transparent); pointer-events: none; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; transition: opacity 0.3s; }
+  .snk-scroll-hint span { font-size: 11px; color: var(--gold); font-weight: 600; letter-spacing: 0.08em; animation: bounce-hint 1.5s ease-in-out infinite; }
+  @keyframes bounce-hint { 0%,100%{transform:translateY(0);opacity:1} 50%{transform:translateY(-4px);opacity:0.6} }
+  .snk-footer { padding: 16px 28px 24px; border-top: 1px solid var(--border); flex-shrink: 0; }
+  .snk-check-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; cursor: pointer; user-select: none; }
+  .snk-checkbox { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--border); background: var(--bg2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .snk-checkbox.checked { background: linear-gradient(135deg, var(--gold), var(--orange)); border-color: transparent; }
+  .snk-checkbox svg { display: none; }
+  .snk-checkbox.checked svg { display: block; }
+  .snk-check-label { font-size: 13px; font-weight: 600; color: var(--text); }
+  .snk-start-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--gold), var(--orange)); color: var(--bg); font-family: 'Black Han Sans', sans-serif; font-size: 1.05rem; letter-spacing: 0.08em; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(255,107,0,0.3); }
+  .snk-start-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,107,0,0.45); }
+  .snk-start-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* ── VOUCHER ─────────────────────────────────────── */
+  .voucher-wrap { margin-bottom: 16px; }
+  .voucher {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 16px;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,215,0,0.1);
+  }
+  .voucher::before, .voucher::after {
+    content: '';
+    position: absolute;
+    width: 20px; height: 20px;
+    background: #0A0A0F;
+    border-radius: 50%;
+    top: 50%; transform: translateY(-50%);
+    z-index: 2;
+  }
+  .voucher::before { left: -10px; }
+  .voucher::after  { right: -10px; }
+  .voucher-top {
+    padding: 16px 24px 12px;
+    border-bottom: 1px dashed rgba(255,215,0,0.2);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .voucher-logo {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--gold), var(--orange));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .voucher-brand { text-align: left; }
+  .voucher-brand-name { font-family: 'Black Han Sans', sans-serif; font-size: 14px; color: var(--gold); letter-spacing: 0.05em; }
+  .voucher-brand-sub  { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .voucher-body { padding: 14px 24px; text-align: left; }
+  .voucher-prize-label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .voucher-prize-name  { font-family: 'Black Han Sans', sans-serif; font-size: 1.15rem; background: linear-gradient(135deg, #FFD700, #FF6B00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .voucher-bottom {
+    padding: 10px 24px 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .voucher-exp-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .voucher-exp-date  { font-size: 12px; font-weight: 700; color: var(--red); font-family: monospace; letter-spacing: 0.05em; margin-top: 2px; }
+  .voucher-code-wrap { text-align: right; }
+  .voucher-code-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .voucher-code-val   { font-size: 13px; font-weight: 700; font-family: monospace; color: var(--text); letter-spacing: 0.12em; margin-top: 2px; }
+  .voucher-dots {
+    display: flex; justify-content: center; gap: 4px; padding: 8px 0 4px;
+  }
+  .voucher-dots span { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,215,0,0.2); }
 </style>
 </head>
 <body>
+
+
+<!-- S&K OVERLAY -->
+<div class="snk-overlay" id="snkOverlay">
+  <div class="snk-box">
+    <div class="snk-header">
+      <div class="snk-badge">📋 Sebelum Bermain</div>
+      <div class="snk-title">Syarat & Ketentuan</div>
+      <div class="snk-subtitle">Baca hingga selesai untuk melanjutkan</div>
+    </div>
+    <div class="snk-scroll-wrap">
+      <div class="snk-body" id="snkBody">
+        <h3>1. Ketentuan Umum</h3>
+        <p>Program Spin & Win ini diselenggarakan oleh Source Crocs sebagai bentuk apresiasi kepada pelanggan setia kami. Dengan berpartisipasi, kamu dianggap telah membaca dan menyetujui seluruh syarat dan ketentuan berikut.</p>
+
+        <h3>2. Syarat Peserta</h3>
+        <ol>
+          <li>Peserta wajib memiliki kode unik yang valid untuk dapat memutar roda.</li>
+          <li>Setiap kode hanya dapat digunakan satu kali dan tidak dapat digunakan ulang.</li>
+          <li>Kode tidak dapat dipindahtangankan kepada orang lain.</li>
+          <li>Peserta wajib memiliki akun WhatsApp aktif untuk proses klaim hadiah.</li>
+        </ol>
+
+        <h3>3. Mekanisme Permainan</h3>
+        <ol>
+          <li>Masukkan kode unik yang kamu miliki pada kolom yang tersedia.</li>
+          <li>Setelah kode terverifikasi, klik tombol SPIN untuk memutar roda.</li>
+          <li>Hasil putaran roda bersifat acak dan tidak dapat diulang.</li>
+          <li>Setiap peserta hanya mendapat satu kali kesempatan spin per kode.</li>
+        </ol>
+
+        <h3>4. Klaim Hadiah</h3>
+        <ol>
+          <li>Ambil screenshot layar saat hasil hadiah muncul sebagai bukti.</li>
+          <li>Klik tombol "Klaim via WhatsApp" dan kirim pesan beserta screenshot.</li>
+          <li>Hadiah wajib diklaim dalam waktu 1x24 jam setelah spin dilakukan.</li>
+          <li>Hadiah tidak dapat ditukar dengan uang tunai atau hadiah lainnya.</li>
+          <li>Keputusan penyelenggara bersifat final dan tidak dapat diganggu gugat.</li>
+        </ol>
+
+        <h3>5. Ketentuan Tambahan</h3>
+        <ol>
+          <li>Penyelenggara berhak membatalkan hadiah apabila ditemukan indikasi kecurangan.</li>
+          <li>Penyelenggara tidak bertanggung jawab atas kode yang hilang atau disalahgunakan.</li>
+          <li>Syarat dan ketentuan ini dapat berubah sewaktu-waktu tanpa pemberitahuan sebelumnya.</li>
+        </ol>
+
+        <p style="margin-top:16px; font-size:12px; color:var(--muted); font-style:italic;">Terakhir diperbarui: Maret 2026 · Source Crocs</p>
+      </div>
+      <div class="snk-scroll-hint" id="snkHint">
+        <span>▼ scroll untuk lanjut ▼</span>
+      </div>
+    </div>
+    <div class="snk-footer">
+      <div class="snk-check-row" id="snkCheckRow" onclick="toggleCheck()">
+        <div class="snk-checkbox" id="snkCheckbox">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="snk-check-label">Saya setuju dengan persyaratan di atas</span>
+      </div>
+      <button class="snk-start-btn" id="snkStartBtn" disabled onclick="startGame()">🎰 Mulai!</button>
+    </div>
+  </div>
+</div>
 
 <div class="stars" id="stars"></div>
 <canvas id="confetti"></canvas>
@@ -246,8 +393,38 @@
     <div class="modal-result" id="modalResult">HADIAH</div>
     <div class="modal-code" id="modalCode"></div>
     <div id="waSection" style="display:none; margin-bottom:16px;">
-      <div style="font-size:12px; color:var(--muted); margin-bottom:12px; line-height:1.5;">
-        📸 Screenshot halaman ini sebagai bukti, lalu klik tombol di bawah untuk klaim hadiahmu!
+      <!-- Voucher -->
+      <div class="voucher-wrap" id="voucherWrap">
+        <div class="voucher">
+          <div class="voucher-top">
+            <div class="voucher-logo">🎰</div>
+            <div class="voucher-brand">
+              <div class="voucher-brand-name">SOURCE CROCS</div>
+              <div class="voucher-brand-sub">Spin &amp; Win · Official Voucher</div>
+            </div>
+          </div>
+          <div class="voucher-body">
+            <div class="voucher-prize-label">Hadiah Kamu</div>
+            <div class="voucher-prize-name" id="voucherPrize">—</div>
+          </div>
+          <div class="voucher-dots">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="voucher-bottom">
+            <div>
+              <div class="voucher-exp-label">⏳ Berlaku hingga</div>
+              <div class="voucher-exp-date" id="voucherExp">—</div>
+            </div>
+            <div class="voucher-code-wrap">
+              <div class="voucher-code-label">Kode Spin</div>
+              <div class="voucher-code-val" id="voucherCode">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:11px; color:var(--muted); margin-bottom:12px; margin-top:8px; line-height:1.6; text-align:center;">
+        📸 <strong style="color:var(--text)">Screenshot voucher ini</strong> sebagai bukti, lalu klaim via WhatsApp
       </div>
       <a id="waBtn" href="#" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:14px; border-radius:10px; background:linear-gradient(135deg,#25D366,#128C7E); color:white; font-family:'Black Han Sans',sans-serif; font-size:1rem; letter-spacing:0.05em; text-decoration:none; box-shadow:0 4px 16px rgba(37,211,102,0.4); margin-bottom:8px;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -421,13 +598,17 @@ async function unlockAccess() {
     unlockBtn.disabled = false; shake(codeInput);
     codeInput.classList.remove('valid'); codeInput.classList.add('invalid');
     codeFeedback.className='code-feedback err';
-    codeFeedback.textContent = result.status==='used' ? '✗ Kode sudah pernah digunakan!' : '✗ Kode tidak valid!';
+    if (result.status==='used') codeFeedback.textContent='✗ Kode sudah pernah digunakan!';
+    else if (result.status==='expired') codeFeedback.textContent='✗ Kode sudah kadaluarsa!';
+    else codeFeedback.textContent='✗ Kode tidak valid!';
     return;
   }
 
   currentCode = code; isUnlocked = true; spinBtn.disabled = false;
   unlockBtn.disabled = true; codeInput.disabled = true;
-  statusBadge.className='status-badge unlocked'; statusText.textContent='Akses dibuka! Putar rodanya 🎉';
+  statusBadge.className='status-badge unlocked';
+  const infoExp = result.sisaHari !== null ? ` · Berlaku ${result.sisaHari} hari lagi` : '';
+  statusText.textContent='Akses dibuka! Putar rodanya 🎉' + infoExp;
   codeFeedback.className='code-feedback ok'; codeFeedback.textContent='✓ Kode diterima!';
 }
 
@@ -466,19 +647,20 @@ async function finishSpin(winnerIdx) {
   renderUsedCodes();
   setConnStatus("ok", `Terhubung · ${validCodes.size} kode tersedia`);
 
+  const usedCodeForVoucher = currentCode;
   isUnlocked = false; unlockBtn.disabled = false; codeInput.disabled = false;
   codeInput.value = ''; codeInput.classList.remove('valid','invalid');
   codeFeedback.textContent = ''; codeFeedback.className = 'code-feedback';
   statusBadge.className='status-badge locked'; statusText.textContent='Masukkan kode untuk memulai';
   currentCode = '';
-  showResult(PRIZES[winnerIdx]);
+  showResult(PRIZES[winnerIdx], usedCodeForVoucher);
 }
 
 // ─── RESULT ────────────────────────────────────────
 // ⚠️ GANTI NOMOR WA DI BAWAH INI (format: 628xxxxxxxxxx)
 const WA_NUMBER = "62895342072060";
 
-function showResult(prize) {
+function showResult(prize, usedCodeForVoucher) {
   const isTryAgain = prize.label === '😔 Coba Lagi';
   document.getElementById('modalEmoji').textContent  = prize.emoji;
   document.getElementById('modalTitle').textContent  = isTryAgain ? 'SAYANG SEKALI...' : 'SELAMAT!';
@@ -609,6 +791,51 @@ document.getElementById('newCodeInput').addEventListener('input',function(){
 document.getElementById('newCodeInput').addEventListener('keydown',e=>{if(e.key==='Enter')adminAddCode();});
 
 function shake(el){el.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],{duration:300,easing:'ease-in-out'});}
+
+
+// ─── S&K LOGIC ─────────────────────────────────────
+let snkChecked   = false;
+let snkScrolled  = false;
+
+const snkBody = document.getElementById('snkBody');
+const snkHint = document.getElementById('snkHint');
+
+snkBody.addEventListener('scroll', () => {
+  const remaining = snkBody.scrollHeight - snkBody.scrollTop - snkBody.clientHeight;
+  if (remaining < 30) {
+    snkScrolled = true;
+    snkHint.style.opacity = '0';
+    updateStartBtn();
+  }
+});
+
+function toggleCheck() {
+  if (!snkScrolled) {
+    snkHint.style.animation = 'none';
+    snkBody.scrollBy({ top: 60, behavior: 'smooth' });
+    return;
+  }
+  snkChecked = !snkChecked;
+  const cb = document.getElementById('snkCheckbox');
+  cb.classList.toggle('checked', snkChecked);
+  updateStartBtn();
+}
+
+function updateStartBtn() {
+  document.getElementById('snkStartBtn').disabled = !(snkChecked && snkScrolled);
+}
+
+function startGame() {
+  document.getElementById('snkOverlay').style.animation = 'fadeOut 0.3s ease forwards';
+  setTimeout(() => {
+    document.getElementById('snkOverlay').style.display = 'none';
+  }, 300);
+}
+
+// Tambah keyframe fadeOut
+const styleEl = document.createElement('style');
+styleEl.textContent = '@keyframes fadeOut { to { opacity: 0; transform: scale(0.97); } }';
+document.head.appendChild(styleEl);
 
 // ─── START ─────────────────────────────────────────
 initCodes();
