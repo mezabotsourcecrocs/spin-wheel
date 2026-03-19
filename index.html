@@ -274,17 +274,32 @@ let currentCode = "";
 let currentAngle = 0;
 let isConnected  = false;
 
-// ─── API ───────────────────────────────────────────
-async function apiCall(params) {
-  try {
+// ─── API (JSONP — kompatibel dengan Apps Script) ──
+function apiCall(params) {
+  return new Promise((resolve) => {
+    const cbName = 'cb_' + Date.now();
+    params.callback = cbName;
     const url = SCRIPT_URL + "?" + new URLSearchParams(params).toString();
-    const res = await fetch(url, { method: "GET", redirect: "follow" });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const text = await res.text();
-    return JSON.parse(text);
-  } catch (err) {
-    return { success: false, message: err.toString() };
-  }
+    const script = document.createElement('script');
+    const timeout = setTimeout(() => {
+      delete window[cbName];
+      document.body.removeChild(script);
+      resolve({ success: false, message: "Timeout" });
+    }, 10000);
+    window[cbName] = function(data) {
+      clearTimeout(timeout);
+      delete window[cbName];
+      document.body.removeChild(script);
+      resolve(data);
+    };
+    script.src = url;
+    script.onerror = () => {
+      clearTimeout(timeout);
+      delete window[cbName];
+      resolve({ success: false, message: "Script error" });
+    };
+    document.body.appendChild(script);
+  });
 }
 
 // ─── INIT ──────────────────────────────────────────
