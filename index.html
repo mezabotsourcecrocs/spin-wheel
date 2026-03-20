@@ -488,7 +488,8 @@ const PRIZES = [
   { label: "🏆 Crocs Classic Clog 1pcs", color: "#FFD700", weight: 2,  emoji: "🏆" },
   { label: "💰 THR 35RB",                  color: "#FF6B00", weight: 10, emoji: "💰" },
   { label: "🎁 Diskon 20RB",               color: "#FF3333", weight: 20, emoji: "🎁" },
-  { label: "😔 Coba Lagi",                 color: "#455A64", weight: 56, emoji: "😔" },
+  { label: "🎟️ Diskon 10RB",               color: "#9B59B6", weight: 43, emoji: "🎟️" },
+  { label: "😔 Coba Lagi",                 color: "#455A64", weight: 57, emoji: "😔" },
 ];
 const TOTAL_WEIGHT = PRIZES.reduce((s, p) => s + p.weight, 0);
 
@@ -530,7 +531,7 @@ function apiCall(params) {
 
 // ─── INIT ──────────────────────────────────────────
 async function initCodes() {
-  setConnStatus("loading", "⏳ Checking server...");
+  setConnStatus("loading", "⏳ Checking server Online Or Not...");
 
   // Start progress bar
   setTimeout(() => {
@@ -544,8 +545,8 @@ async function initCodes() {
   ]);
 
   if (!data.success) {
-    setConnStatus("error", "❌ Server Disconnected");
-    document.getElementById('checkingStatus').textContent = '❌ Server Disconnected';
+    setConnStatus("error", "❌ Server Disconnected • Check Your Connection");
+    document.getElementById('checkingStatus').textContent = ' Server Disconnected • Try Again';
     document.getElementById('checkingStatus').className = 'checking-status error';
     document.getElementById('checkingBar').style.background = '#FF3333';
     document.getElementById('checkingRetryBtn').style.display = 'block';
@@ -558,7 +559,7 @@ async function initCodes() {
   setConnStatus("ok", "✅ Server Online Verified");
 
   // Tampilkan status sukses
-  document.getElementById('checkingStatus').textContent = '✅ Server Online Verified';
+  document.getElementById('checkingStatus').textContent = ' Server Online • Stable ';
   document.getElementById('checkingStatus').className = 'checking-status ok';
   document.getElementById('checkingBar').style.background = '#00C853';
 
