@@ -295,6 +295,30 @@
   .nama-saved { font-size: 12px; color: #00C853; font-weight: 600; margin-top: 6px; display: none; }
   .voucher-nama { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
   .voucher-nama-val { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 2px; font-family: 'Outfit', sans-serif; }
+
+  /* ── RE-SPIN ─────────────────────────────────────── */
+  .respin-section { margin-bottom: 16px; text-align: center; }
+  .respin-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #1ABC9C; border: 1px solid #1ABC9C; padding: 4px 12px; border-radius: 20px; background: rgba(26,188,156,0.08); margin-bottom: 12px; }
+  .respin-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, #1ABC9C, #16A085); color: white; font-family: 'Black Han Sans', sans-serif; font-size: 1.05rem; letter-spacing: 0.08em; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(26,188,156,0.4); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .respin-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,188,156,0.5); }
+  .respin-sub { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+  /* ── JACKPOT EFFECT ──────────────────────────────── */
+  .jackpot-overlay { display: none; position: fixed; inset: 0; z-index: 98; pointer-events: none; }
+  .jackpot-overlay.show { display: block; }
+  .jackpot-rays { position: absolute; inset: 0; background: repeating-conic-gradient(rgba(255,215,0,0.05) 0deg, transparent 10deg, rgba(255,215,0,0.05) 20deg); animation: ray-spin 4s linear infinite; }
+  @keyframes ray-spin { to { transform: rotate(360deg); } }
+  .jackpot-flash { position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(255,215,0,0.15), transparent 70%); animation: flash-pulse 0.5s ease-in-out infinite alternate; }
+  @keyframes flash-pulse { from { opacity: 0.3; } to { opacity: 1; } }
+
+  /* ── COPY KODE BTN ───────────────────────────────── */
+  .copy-code-btn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; border: 1px solid rgba(255,215,0,0.3); border-radius: 8px; background: rgba(255,215,0,0.05); color: var(--gold); font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+  .copy-code-btn:hover { background: rgba(255,215,0,0.1); border-color: rgba(255,215,0,0.5); }
+  .copy-code-btn.copied { background: rgba(0,200,83,0.1); border-color: rgba(0,200,83,0.3); color: #00C853; }
+
+  /* ── EXPORT CSV BTN ──────────────────────────────── */
+  .export-btn { width: 100%; padding: 10px 16px; border: 1px solid rgba(52,152,219,0.4); border-radius: 8px; background: rgba(52,152,219,0.08); color: #3498DB; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .export-btn:hover { background: rgba(52,152,219,0.15); transform: translateY(-1px); }
 </style>
 </head>
 <body>
@@ -541,8 +565,17 @@
       <div class="admin-divider"></div>
       <div class="pool-label">Kode Terpakai (<span id="adminUsedCount">0</span>)</div>
       <div class="code-pool" id="adminUsedPool"></div>
+      <div class="admin-divider"></div>
+      <button class="export-btn" onclick="exportCSV()">📥 Export Data ke CSV</button>
     </div>
   </div>
+</div>
+
+
+<!-- JACKPOT EFFECT -->
+<div class="jackpot-overlay" id="jackpotOverlay">
+  <div class="jackpot-rays"></div>
+  <div class="jackpot-flash"></div>
 </div>
 
 <!-- KONFIRMASI SPIN -->
@@ -564,6 +597,14 @@
     <div class="modal-title" id="modalTitle">SELAMAT!</div>
     <div class="modal-result" id="modalResult">HADIAH</div>
     <div class="modal-code" id="modalCode"></div>
+    <!-- RE-SPIN SECTION -->
+    <div class="respin-section" id="respinSection" style="display:none;">
+      <div class="respin-badge">🍀 Keberuntunganmu!</div>
+      <button class="respin-btn" onclick="doReSpin()">
+        🔄 Putar Sekali Lagi!
+      </button>
+      <div class="respin-sub">Kode yang sama bisa digunakan 1x lagi</div>
+    </div>
     <div id="waSection" style="display:none; margin-bottom:16px;">
       <!-- Form Nama -->
       <div class="nama-section" id="namaSection">
@@ -611,9 +652,12 @@
           </div>
         </div>
       </div>
-      <div style="font-size:11px; color:var(--muted); margin-bottom:12px; margin-top:8px; line-height:1.6; text-align:center;">
+      <div style="font-size:11px; color:var(--muted); margin-bottom:8px; margin-top:8px; line-height:1.6; text-align:center;">
         📸 <strong style="color:var(--text)">Screenshot voucher ini</strong> sebagai bukti, lalu klaim via WhatsApp
       </div>
+      <button class="copy-code-btn" id="copyCodeBtn" onclick="copyKode()">
+        📋 Salin Kode Spin
+      </button>
       <a id="waBtn" href="#" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:14px; border-radius:10px; background:linear-gradient(135deg,#25D366,#128C7E); color:white; font-family:'Black Han Sans',sans-serif; font-size:1rem; letter-spacing:0.05em; text-decoration:none; box-shadow:0 4px 16px rgba(37,211,102,0.4); margin-bottom:8px;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         Klaim via WhatsApp
@@ -636,8 +680,9 @@ const PRIZES = [
   { label: "🏆 Crocs Classic Clog 1pcs", color: "#FFD700", weight: 3,  emoji: "🏆" },
   { label: "💰 THR 35RB",                  color: "#FF6B00", weight: 10, emoji: "💰" },
   { label: "🎁 Diskon 20RB",               color: "#FF3333", weight: 21, emoji: "🎁" },
-  { label: "🎟️ Diskon 10RB",               color: "#9B59B6", weight: 43, emoji: "🎟️" },
+  { label: "🎟️ Diskon 10RB",               color: "#9B59B6", weight: 34, emoji: "🎟️" },
   { label: "😔 Coba Lagi",                 color: "#455A64", weight: 53, emoji: "😔" },
+  { label: "🔄 Re-Spin",                    color: "#1ABC9C", weight: 30,  emoji: "🔄" },
 ];
 const TOTAL_WEIGHT = PRIZES.reduce((s, p) => s + p.weight, 0);
 
@@ -827,7 +872,7 @@ async function unlockAccess() {
   const code = codeInput.value.trim().toUpperCase();
   if (!code) return;
   if (!isConnected) { codeFeedback.className='code-feedback err'; codeFeedback.textContent='✗ Tidak terhubung ke server'; return; }
-  if (usedCodes.has(code)) { shake(codeInput); codeFeedback.className='code-feedback err'; codeFeedback.textContent='✗ Kode sudah digunakan!'; return; }
+  if (usedCodes.has(code) || isSessionUsed(code)) { shake(codeInput); codeFeedback.className='code-feedback err'; codeFeedback.textContent='✗ Kode sudah digunakan!'; return; }
 
   if (!checkRateLimit('check')) {
     codeFeedback.className='code-feedback err';
@@ -864,18 +909,33 @@ function startSpin() {
 }
 
 async function finishSpin(winnerIdx) {
-  const prize = PRIZES[winnerIdx];
-
-  // Kirim hadiah ke server supaya tercatat di Sheets
-  await apiCall({ action: "use", code: currentCode, hadiah: prize.label });
-  usedCodes.add(currentCode); validCodes.delete(currentCode);
-  renderUsedCodes();
-  setConnStatus("ok", "✅ Server Online Verified");
+  const prize    = PRIZES[winnerIdx];
+  const isReSpin = prize.label === '🔄 Re-Spin';
 
   // Log untuk statistik admin panel
   const log = JSON.parse(localStorage.getItem('prizeLog') || '{}');
   log[prize.label] = (log[prize.label] || 0) + 1;
   localStorage.setItem('prizeLog', JSON.stringify(log));
+
+  if (isReSpin) {
+    // Kode TIDAK hangus — simpan currentCode untuk re-spin
+    reSpinCode = currentCode;
+    isSpinning = false;
+    isUnlocked = false;
+    spinBtn.disabled = true;
+    codeInput.value = ''; codeInput.classList.remove('valid','invalid');
+    codeFeedback.textContent = ''; codeFeedback.className = 'code-feedback';
+    // Kirim null supaya showResult tidak isi voucher
+    showResult(prize, null);
+    return;
+  }
+
+  // Kirim hadiah ke server supaya tercatat di Sheets
+  await apiCall({ action: "use", code: currentCode, hadiah: prize.label });
+  usedCodes.add(currentCode); validCodes.delete(currentCode);
+  markSessionUsed(currentCode);
+  renderUsedCodes();
+  setConnStatus("ok", "✅ Server Online Verified");
 
   const usedCodeForVoucher = currentCode;
   isUnlocked = false; unlockBtn.disabled = false; codeInput.disabled = false;
@@ -892,15 +952,23 @@ const WA_NUMBER = "62895342072060";
 
 function showResult(prize, usedCodeForVoucher) {
   const isTryAgain = prize.label === '😔 Coba Lagi';
+  const isReSpin   = prize.label === '🔄 Re-Spin';
+
   document.getElementById('modalEmoji').textContent  = prize.emoji;
-  document.getElementById('modalTitle').textContent  = isTryAgain ? 'SAYANG SEKALI...' : 'SELAMAT!';
+  document.getElementById('modalTitle').textContent  = isTryAgain ? 'SAYANG SEKALI...' : isReSpin ? 'BERUNTUNG!' : 'SELAMAT!';
   document.getElementById('modalResult').textContent = prize.label;
-  document.getElementById('modalCode').textContent   = 'Kode yang digunakan telah hangus';
+  document.getElementById('modalCode').textContent   = isReSpin ? '' : 'Kode yang digunakan telah hangus';
 
-  const waSection = document.getElementById('waSection');
-  const waBtn     = document.getElementById('waBtn');
+  const waSection     = document.getElementById('waSection');
+  const waBtn         = document.getElementById('waBtn');
+  const respinSection = document.getElementById('respinSection');
 
-  if (!isTryAgain) {
+  if (isReSpin) {
+    // Re-Spin: sembunyikan semua, tampilkan tombol spin lagi saja
+    waSection.style.display     = 'none';
+    respinSection.style.display = 'block';
+  } else if (!isTryAgain) {
+    respinSection.style.display = 'none';
     const expDate = new Date();
     expDate.setDate(expDate.getDate() + 21);
     const expStr = expDate.toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' });
@@ -910,12 +978,12 @@ function showResult(prize, usedCodeForVoucher) {
     pendingNamaHadiah = prize.label;
 
     // Reset form nama
-    document.getElementById('namaInput').value          = '';
+    document.getElementById('namaInput').value           = '';
     document.getElementById('namaInput').style.borderColor = '';
-    document.getElementById('namaSaved').style.display  = 'none';
-    document.getElementById('namaSubmitBtn').disabled   = false;
+    document.getElementById('namaSaved').style.display   = 'none';
+    document.getElementById('namaSubmitBtn').disabled    = false;
     document.getElementById('namaSubmitBtn').textContent = 'Simpan';
-    document.getElementById('voucherNama').textContent  = '—';
+    document.getElementById('voucherNama').textContent   = '—';
 
     // Isi voucher
     document.getElementById('voucherPrize').textContent = prize.label;
@@ -936,14 +1004,25 @@ function showResult(prize, usedCodeForVoucher) {
     waBtn.href = `https://wa.me/${WA_NUMBER}?text=${pesan}`;
     waSection.style.display = 'block';
   } else {
-    waSection.style.display = 'none';
+    waSection.style.display     = 'none';
+    respinSection.style.display = 'none';
   }
 
   document.getElementById('modal').classList.add('show');
-  if (!isTryAgain) launchConfetti();
+  if (!isTryAgain && !isReSpin) {
+    launchConfetti();
+    // Haptic feedback normal
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+  }
+  if (isReSpin) launchConfetti();
+  // Jackpot effect untuk hadiah utama
+  if (JACKPOT_LABELS.includes(prize.label)) {
+    triggerJackpot();
+  }
 }
 function closeModal() {
   document.getElementById('modal').classList.remove('show');
+  document.getElementById('respinSection').style.display = 'none';
   // Reset form nama
   pendingNamaCode   = '';
   pendingNamaHadiah = '';
@@ -1284,6 +1363,97 @@ async function submitNama() {
     `Saya sudah screenshot voucher sebagai bukti. Mohon bantu proses klaim hadiah saya ya!`
   );
   waBtn.href = `https://wa.me/${WA_NUMBER}?text=${pesan}`;
+}
+
+
+// ─── RE-SPIN ────────────────────────────────────────
+let reSpinCode = '';
+
+function doReSpin() {
+  closeModal();
+  // Aktifkan kembali dengan kode yang sama
+  currentCode = reSpinCode;
+  reSpinCode  = '';
+  isUnlocked  = true;
+  spinBtn.disabled = false;
+  unlockBtn.disabled = true;
+  codeInput.disabled = true;
+  codeInput.value = currentCode;
+  statusBadge.className = 'status-badge unlocked';
+  statusText.textContent = '🔄 Re-Spin aktif! Putar rodanya!';
+  codeFeedback.className = 'code-feedback ok';
+  codeFeedback.textContent = '✓ Re-Spin! Gunakan kesempatan ini!';
+}
+
+
+// ─── JACKPOT ANIMASI ───────────────────────────────
+const JACKPOT_LABELS = ["🏆 Crocs Classic Clog 1pcs"];
+
+function triggerJackpot() {
+  const el = document.getElementById('jackpotOverlay');
+  el.classList.add('show');
+  // Haptic feedback di mobile
+  if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+// ─── COPY KODE ─────────────────────────────────────
+function copyKode() {
+  const kode = document.getElementById('voucherCode').textContent;
+  if (!kode || kode === '—') return;
+  navigator.clipboard.writeText(kode).then(() => {
+    const btn = document.getElementById('copyCodeBtn');
+    btn.classList.add('copied');
+    btn.textContent = '✓ Kode Tersalin!';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '📋 Salin Kode Spin';
+    }, 2000);
+  }).catch(() => {
+    // Fallback untuk browser lama
+    const el = document.createElement('textarea');
+    el.value = kode;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    const btn = document.getElementById('copyCodeBtn');
+    btn.classList.add('copied');
+    btn.textContent = '✓ Kode Tersalin!';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '📋 Salin Kode Spin';
+    }, 2000);
+  });
+}
+
+// ─── SESSION SECURITY ──────────────────────────────
+const sessionUsed = new Set(JSON.parse(sessionStorage.getItem('sessionUsed') || '[]'));
+
+function markSessionUsed(code) {
+  sessionUsed.add(code);
+  sessionStorage.setItem('sessionUsed', JSON.stringify([...sessionUsed]));
+}
+
+function isSessionUsed(code) {
+  return sessionUsed.has(code);
+}
+
+// ─── EXPORT CSV ────────────────────────────────────
+function exportCSV() {
+  const rows = [['Kode', 'Status', 'Tersedia', 'Terpakai']];
+  [...validCodes].forEach(c => rows.push([c, 'available', 'Ya', 'Tidak']));
+  [...usedCodes].forEach(c => rows.push([c, 'used', 'Tidak', 'Ya']));
+
+  const csv     = rows.map(r => r.join(',')).join('\n');
+  const blob    = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url     = URL.createObjectURL(blob);
+  const link    = document.createElement('a');
+  const tanggal = new Date().toLocaleDateString('id-ID').replace(/\//g, '-');
+  link.href     = url;
+  link.download = `spinwheel-data-${tanggal}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 // ─── START ─────────────────────────────────────────
