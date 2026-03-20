@@ -633,11 +633,11 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzzB4ntM1qopiYk02rZ1
 const ADMIN_PASSWORD = 'tegar'; // Ganti sesuai kebutuhan
 
 const PRIZES = [
-  { label: "🏆 Crocs Classic Clog 1pcs", color: "#FFD700", weight: 2,  emoji: "🏆" },
+  { label: "🏆 Crocs Classic Clog 1pcs", color: "#FFD700", weight: 3,  emoji: "🏆" },
   { label: "💰 THR 35RB",                  color: "#FF6B00", weight: 10, emoji: "💰" },
-  { label: "🎁 Diskon 20RB",               color: "#FF3333", weight: 20, emoji: "🎁" },
+  { label: "🎁 Diskon 20RB",               color: "#FF3333", weight: 21, emoji: "🎁" },
   { label: "🎟️ Diskon 10RB",               color: "#9B59B6", weight: 43, emoji: "🎟️" },
-  { label: "😔 Coba Lagi",                 color: "#455A64", weight: 57, emoji: "😔" },
+  { label: "😔 Coba Lagi",                 color: "#455A64", weight: 53, emoji: "😔" },
 ];
 const TOTAL_WEIGHT = PRIZES.reduce((s, p) => s + p.weight, 0);
 
@@ -901,10 +901,21 @@ function showResult(prize, usedCodeForVoucher) {
   const waBtn     = document.getElementById('waBtn');
 
   if (!isTryAgain) {
-    // Hitung expired voucher: 3 minggu dari sekarang
     const expDate = new Date();
     expDate.setDate(expDate.getDate() + 21);
     const expStr = expDate.toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' });
+
+    // Set pending untuk form nama
+    pendingNamaCode   = usedCodeForVoucher || '';
+    pendingNamaHadiah = prize.label;
+
+    // Reset form nama
+    document.getElementById('namaInput').value          = '';
+    document.getElementById('namaInput').style.borderColor = '';
+    document.getElementById('namaSaved').style.display  = 'none';
+    document.getElementById('namaSubmitBtn').disabled   = false;
+    document.getElementById('namaSubmitBtn').textContent = 'Simpan';
+    document.getElementById('voucherNama').textContent  = '—';
 
     // Isi voucher
     document.getElementById('voucherPrize').textContent = prize.label;
