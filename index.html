@@ -226,11 +226,94 @@
   .checking-continue-btn:hover { transform: translateY(-2px); }
   .checking-error-btn { padding: 12px 28px; border: none; border-radius: 10px; background: linear-gradient(135deg, #FF3333, #c0392b); color: white; font-family: 'Black Han Sans', sans-serif; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: none; box-shadow: 0 4px 16px rgba(255,51,51,0.4); margin-top: 4px; }
   .checking-error-btn:hover { transform: translateY(-2px); }
+
+  /* ── KONFIRMASI SPIN ─────────────────────────────── */
+  .confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 150; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  .confirm-overlay.show { display: flex; }
+  .confirm-box { background: var(--surface); border: 1px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 36px 32px; text-align: center; max-width: 340px; width: 90%; animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
+  .confirm-emoji { font-size: 3rem; margin-bottom: 12px; display: block; }
+  .confirm-title { font-family: 'Black Han Sans', sans-serif; font-size: 1.3rem; color: var(--text); margin-bottom: 8px; }
+  .confirm-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+  .confirm-btns { display: flex; gap: 10px; }
+  .confirm-btn-yes { flex: 1; padding: 12px; border: none; border-radius: 10px; background: linear-gradient(135deg, var(--gold), var(--orange)); color: var(--bg); font-family: 'Black Han Sans', sans-serif; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+  .confirm-btn-yes:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(255,107,0,0.4); }
+  .confirm-btn-no { flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg2); color: var(--muted); font-family: 'Black Han Sans', sans-serif; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+  .confirm-btn-no:hover { color: var(--text); }
+
+  /* ── EVENT COUNTDOWN ─────────────────────────────── */
+  .event-banner { width: 100%; text-align: center; padding: 10px 20px; background: linear-gradient(135deg, rgba(255,215,0,0.08), rgba(255,107,0,0.08)); border: 1px solid rgba(255,215,0,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; animation: fadeDown 0.8s ease both; }
+  .event-banner-label { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+  .event-countdown { display: flex; gap: 8px; align-items: center; }
+  .event-unit { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .event-num { font-family: 'Black Han Sans', sans-serif; font-size: 1.4rem; color: var(--gold); line-height: 1; min-width: 36px; text-align: center; }
+  .event-lbl { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .event-sep { font-family: 'Black Han Sans', sans-serif; font-size: 1.2rem; color: var(--orange); margin-bottom: 10px; }
+
+  /* ── EVENT EXPIRED OVERLAY ───────────────────────── */
+  .expired-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.97); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(12px); }
+  .expired-overlay.show { display: flex; }
+  .expired-box { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+  .expired-emoji { font-size: 5rem; }
+  .expired-title { font-family: 'Black Han Sans', sans-serif; font-size: 2rem; color: var(--red); letter-spacing: 0.05em; }
+  .expired-sub { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 320px; }
+  .expired-date { font-size: 12px; color: var(--muted); font-family: monospace; margin-top: 4px; }
+
+  /* ── WATERMARK ───────────────────────────────────── */
+  .watermark { position: fixed; inset: 0; pointer-events: none; z-index: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .watermark-text { font-family: 'Black Han Sans', sans-serif; font-size: clamp(3rem, 10vw, 7rem); color: rgba(255,215,0,0.03); letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; transform: rotate(-30deg); user-select: none; pointer-events: none; }
+
+  /* ── ADMIN STATISTIK ─────────────────────────────── */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+  .stat-card.green { border-color: rgba(0,200,83,0.3); background: rgba(0,200,83,0.05); }
+  .stat-card.red   { border-color: rgba(255,51,51,0.3); background: rgba(255,51,51,0.05); }
+  .stat-card.gold  { border-color: rgba(255,215,0,0.3); background: rgba(255,215,0,0.05); }
+  .stat-card.blue  { border-color: rgba(52,152,219,0.3); background: rgba(52,152,219,0.05); }
+  .stat-num { font-family: 'Black Han Sans', sans-serif; font-size: 1.6rem; line-height: 1; }
+  .stat-card.green .stat-num { color: #00C853; }
+  .stat-card.red   .stat-num { color: var(--red); }
+  .stat-card.gold  .stat-num { color: var(--gold); }
+  .stat-card.blue  .stat-num { color: #3498DB; }
+  .stat-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .prize-stats { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px; }
+  .prize-stat-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .prize-stat-bar-wrap { flex: 1; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
+  .prize-stat-bar { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+  .prize-stat-label { min-width: 90px; color: var(--text); font-weight: 600; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .prize-stat-count { min-width: 24px; text-align: right; color: var(--muted); font-weight: 700; font-size: 11px; }
+
+  /* ── FORM NAMA ───────────────────────────────────── */
+  .nama-section { margin-bottom: 16px; }
+  .nama-label { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; display: block; }
+  .nama-input-wrap { display: flex; gap: 8px; }
+  .nama-input { flex: 1; background: var(--bg2); border: 1.5px solid rgba(255,215,0,0.3); border-radius: 10px; padding: 12px 14px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; color: var(--text); outline: none; transition: border-color 0.2s; }
+  .nama-input:focus { border-color: rgba(255,215,0,0.6); box-shadow: 0 0 0 3px rgba(255,215,0,0.08); }
+  .nama-input::placeholder { color: var(--muted); font-weight: 400; }
+  .nama-submit-btn { padding: 12px 16px; border: none; border-radius: 10px; background: linear-gradient(135deg, var(--gold), var(--orange)); color: var(--bg); font-family: 'Black Han Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .nama-submit-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,107,0,0.4); }
+  .nama-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .nama-saved { font-size: 12px; color: #00C853; font-weight: 600; margin-top: 6px; display: none; }
+  .voucher-nama { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .voucher-nama-val { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 2px; font-family: 'Outfit', sans-serif; }
 </style>
 </head>
 <body>
 
 
+
+
+<!-- WATERMARK -->
+<div class="watermark"><div class="watermark-text">source.crocs</div></div>
+
+<!-- EVENT EXPIRED OVERLAY -->
+<div class="expired-overlay" id="expiredOverlay">
+  <div class="expired-box">
+    <div class="expired-emoji">⏰</div>
+    <div class="expired-title">EVENT BERAKHIR</div>
+    <div class="expired-sub">Maaf, event Spin & Win sudah berakhir.<br>Pantau terus media sosial kami untuk event selanjutnya!</div>
+    <div class="expired-date">Event berlaku hingga: 10 April 2026</div>
+  </div>
+</div>
 
 <!-- CHECKING SERVER OVERLAY -->
 <div class="checking-overlay" id="checkingOverlay">
@@ -324,7 +407,21 @@
     <p class="header-sub">Masukkan kode unikmu untuk memutar roda keberuntungan</p>
   </div>
 
-  <div class="main-grid">
+        <!-- EVENT COUNTDOWN BANNER -->
+      <div class="event-banner" id="eventBanner">
+        <span class="event-banner-label">🔥 Event berakhir dalam</span>
+        <div class="event-countdown">
+          <div class="event-unit"><span class="event-num" id="cdDays">--</span><span class="event-lbl">Hari</span></div>
+          <span class="event-sep">:</span>
+          <div class="event-unit"><span class="event-num" id="cdHours">--</span><span class="event-lbl">Jam</span></div>
+          <span class="event-sep">:</span>
+          <div class="event-unit"><span class="event-num" id="cdMins">--</span><span class="event-lbl">Menit</span></div>
+          <span class="event-sep">:</span>
+          <div class="event-unit"><span class="event-num" id="cdSecs">--</span><span class="event-lbl">Detik</span></div>
+        </div>
+      </div>
+
+<div class="main-grid">
     <div class="wheel-section">
       <div class="wheel-wrapper" id="wheelWrapper">
         <div class="wheel-pointer">
@@ -407,6 +504,28 @@
       <button class="admin-modal-close" onclick="closeAdminModal()">✕</button>
     </div>
     <div class="admin-modal-body">
+      <div class="admin-title">📊 Statistik Event</div>
+      <div class="stats-grid">
+        <div class="stat-card gold">
+          <div class="stat-num" id="statTotal">0</div>
+          <div class="stat-lbl">Total Kode</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-num" id="statAvail">0</div>
+          <div class="stat-lbl">Tersedia</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-num" id="statUsed">0</div>
+          <div class="stat-lbl">Terpakai</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-num" id="statPct">0%</div>
+          <div class="stat-lbl">Tingkat Pakai</div>
+        </div>
+      </div>
+      <div class="pool-label">Distribusi Hadiah</div>
+      <div class="prize-stats" id="prizeStats"><span style="font-size:12px;color:var(--muted)">Belum ada spin</span></div>
+      <div class="admin-divider"></div>
       <div class="admin-title">Kelola Kode Unik</div>
       <div class="admin-row">
         <input class="admin-input" id="newCodeInput" placeholder="KODE-BARU" maxlength="9"/>
@@ -426,6 +545,19 @@
   </div>
 </div>
 
+<!-- KONFIRMASI SPIN -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <span class="confirm-emoji">🎰</span>
+    <div class="confirm-title">Yakin mau SPIN?</div>
+    <div class="confirm-sub">Kamu hanya punya <strong style="color:var(--gold)">1 kali kesempatan</strong> per kode.<br>Pastikan kamu siap sebelum memutar roda!</div>
+    <div class="confirm-btns">
+      <button class="confirm-btn-no" onclick="cancelSpin()">Batal</button>
+      <button class="confirm-btn-yes" onclick="confirmSpin()">🎰 SPIN!</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <span class="modal-emoji" id="modalEmoji">🎉</span>
@@ -433,6 +565,16 @@
     <div class="modal-result" id="modalResult">HADIAH</div>
     <div class="modal-code" id="modalCode"></div>
     <div id="waSection" style="display:none; margin-bottom:16px;">
+      <!-- Form Nama -->
+      <div class="nama-section" id="namaSection">
+        <label class="nama-label">👤 Masukkan nama kamu</label>
+        <div class="nama-input-wrap">
+          <input class="nama-input" id="namaInput" type="text" placeholder="Nama lengkap..." maxlength="40" autocomplete="off"/>
+          <button class="nama-submit-btn" id="namaSubmitBtn" onclick="submitNama()">Simpan</button>
+        </div>
+        <div class="nama-saved" id="namaSaved">✓ Nama tersimpan!</div>
+      </div>
+
       <!-- Voucher -->
       <div class="voucher-wrap" id="voucherWrap">
         <div class="voucher">
@@ -457,6 +599,12 @@
               <div class="voucher-exp-date" id="voucherExp">—</div>
             </div>
             <div class="voucher-code-wrap">
+              <div class="voucher-nama">👤 Nama</div>
+              <div class="voucher-nama-val" id="voucherNama">—</div>
+            </div>
+          </div>
+          <div style="padding: 0 24px 12px; display:flex; justify-content:flex-end;">
+            <div>
               <div class="voucher-code-label">Kode Spin</div>
               <div class="voucher-code-val" id="voucherCode">—</div>
             </div>
@@ -556,7 +704,7 @@ async function initCodes() {
   validCodes  = new Set(data.available);
   usedCodes   = new Set(data.used);
   isConnected = true;
-  setConnStatus("ok", "✅ Server Online Verified");
+  setConnStatus("ok", " Server Online • Stable");
 
   // Tampilkan status sukses
   document.getElementById('checkingStatus').textContent = ' Server Online • Stable ';
@@ -572,6 +720,7 @@ async function initCodes() {
 }
 
 function proceedToSnk() {
+  if (checkEventExpired()) return;
   const checkEl = document.getElementById('checkingOverlay');
   checkEl.style.transition = 'opacity 0.4s ease';
   checkEl.style.opacity = '0';
@@ -680,6 +829,12 @@ async function unlockAccess() {
   if (!isConnected) { codeFeedback.className='code-feedback err'; codeFeedback.textContent='✗ Tidak terhubung ke server'; return; }
   if (usedCodes.has(code)) { shake(codeInput); codeFeedback.className='code-feedback err'; codeFeedback.textContent='✗ Kode sudah digunakan!'; return; }
 
+  if (!checkRateLimit('check')) {
+    codeFeedback.className='code-feedback err';
+    codeFeedback.textContent='✗ Terlalu banyak percobaan, tunggu sebentar!';
+    return;
+  }
+
   unlockBtn.disabled = true;
   codeFeedback.className='code-feedback loading'; codeFeedback.textContent='⏳ Memverifikasi...';
 
@@ -705,37 +860,22 @@ async function unlockAccess() {
 // ─── SPIN ──────────────────────────────────────────
 function startSpin() {
   if (!isUnlocked || isSpinning) return;
-  isSpinning = true; spinBtn.disabled = true;
-
-  const rand = Math.random() * TOTAL_WEIGHT;
-  let cumulative = 0, winnerIdx = 0;
-  for (let i = 0; i < PRIZES.length; i++) { cumulative += PRIZES[i].weight; if (rand < cumulative) { winnerIdx = i; break; } }
-
-  let sliceStart = 0;
-  for (let i = 0; i < winnerIdx; i++) sliceStart += (PRIZES[i].weight/TOTAL_WEIGHT)*Math.PI*2;
-  const sliceMid    = sliceStart + (PRIZES[winnerIdx].weight/TOTAL_WEIGHT)*Math.PI;
-  const spins       = (5+Math.floor(Math.random()*4))*Math.PI*2;
-  const targetAngle = currentAngle - (currentAngle%(Math.PI*2)) + spins + (Math.PI*1.5) - sliceMid;
-  const duration    = 4000 + Math.random()*1500;
-  const startTime   = performance.now();
-  const startAngle  = currentAngle;
-
-  function easeOut(t) { return 1-Math.pow(1-t,4); }
-  function animate(now) {
-    const t = Math.min((now-startTime)/duration, 1);
-    currentAngle = startAngle + (targetAngle-startAngle)*easeOut(t);
-    drawWheel(currentAngle);
-    if (t < 1) requestAnimationFrame(animate);
-    else { currentAngle = targetAngle%(Math.PI*2); isSpinning = false; finishSpin(winnerIdx); }
-  }
-  requestAnimationFrame(animate);
+  document.getElementById('confirmOverlay').classList.add('show');
 }
 
 async function finishSpin(winnerIdx) {
-  await apiCall({ action: "use", code: currentCode });
+  const prize = PRIZES[winnerIdx];
+
+  // Kirim hadiah ke server supaya tercatat di Sheets
+  await apiCall({ action: "use", code: currentCode, hadiah: prize.label });
   usedCodes.add(currentCode); validCodes.delete(currentCode);
   renderUsedCodes();
   setConnStatus("ok", "✅ Server Online Verified");
+
+  // Log untuk statistik admin panel
+  const log = JSON.parse(localStorage.getItem('prizeLog') || '{}');
+  log[prize.label] = (log[prize.label] || 0) + 1;
+  localStorage.setItem('prizeLog', JSON.stringify(log));
 
   const usedCodeForVoucher = currentCode;
   isUnlocked = false; unlockBtn.disabled = false; codeInput.disabled = false;
@@ -743,7 +883,7 @@ async function finishSpin(winnerIdx) {
   codeFeedback.textContent = ''; codeFeedback.className = 'code-feedback';
   statusBadge.className='status-badge locked'; statusText.textContent='Masukkan kode untuk memulai';
   currentCode = '';
-  showResult(PRIZES[winnerIdx], usedCodeForVoucher);
+  showResult(prize, usedCodeForVoucher);
 }
 
 // ─── RESULT ────────────────────────────────────────
@@ -791,7 +931,18 @@ function showResult(prize, usedCodeForVoucher) {
   document.getElementById('modal').classList.add('show');
   if (!isTryAgain) launchConfetti();
 }
-function closeModal() { document.getElementById('modal').classList.remove('show'); }
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+  // Reset form nama
+  pendingNamaCode   = '';
+  pendingNamaHadiah = '';
+  document.getElementById('namaInput').value          = '';
+  document.getElementById('namaInput').style.borderColor = '';
+  document.getElementById('namaSaved').style.display  = 'none';
+  document.getElementById('namaSubmitBtn').disabled   = false;
+  document.getElementById('namaSubmitBtn').textContent = 'Simpan';
+  document.getElementById('voucherNama').textContent  = '—';
+}
 document.getElementById('modal').addEventListener('click', function(e) { if (e.target===this) closeModal(); });
 
 // ─── CONFETTI ──────────────────────────────────────
@@ -849,6 +1000,34 @@ async function refreshAdminPanel(){
     ?'<span style="font-size:12px;color:var(--muted)">Belum ada</span>'
     :[...usedCodes].map(c=>`<div class="used-chip" style="text-decoration:none">${c}</div>`).join('');
   setConnStatus("ok","✅ Server Online Verified");
+  renderAdminStats();
+}
+
+function renderAdminStats() {
+  const total = validCodes.size + usedCodes.size;
+  const pct   = total > 0 ? Math.round((usedCodes.size / total) * 100) : 0;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statAvail').textContent = validCodes.size;
+  document.getElementById('statUsed').textContent  = usedCodes.size;
+  document.getElementById('statPct').textContent   = pct + '%';
+
+  // Prize distribution dari localStorage
+  const log = JSON.parse(localStorage.getItem('prizeLog') || '{}');
+  const totalSpins = Object.values(log).reduce((a,b) => a+b, 0);
+  const prizeEl = document.getElementById('prizeStats');
+  if (totalSpins === 0) {
+    prizeEl.innerHTML = '<span style="font-size:12px;color:var(--muted)">Belum ada spin</span>';
+    return;
+  }
+  prizeEl.innerHTML = PRIZES.map(p => {
+    const count = log[p.label] || 0;
+    const pct2  = Math.round((count / totalSpins) * 100);
+    return `<div class="prize-stat-row">
+      <div class="prize-stat-label">${p.label}</div>
+      <div class="prize-stat-bar-wrap"><div class="prize-stat-bar" style="width:${pct2}%;background:${p.color}"></div></div>
+      <div class="prize-stat-count">${count}x</div>
+    </div>`;
+  }).join('');
 }
 
 async function adminAddCode(){
@@ -938,6 +1117,163 @@ function startGame() {
 const styleEl = document.createElement('style');
 styleEl.textContent = '@keyframes fadeOut { to { opacity: 0; transform: scale(0.97); } }';
 document.head.appendChild(styleEl);
+
+
+// ─── RATE LIMITING ─────────────────────────────────
+const rateLimitMap = {};
+function checkRateLimit(action) {
+  const now = Date.now();
+  const limit = { check: { max: 5, window: 60000 }, use: { max: 3, window: 300000 } };
+  if (!limit[action]) return true;
+  if (!rateLimitMap[action]) rateLimitMap[action] = [];
+  rateLimitMap[action] = rateLimitMap[action].filter(t => now - t < limit[action].window);
+  if (rateLimitMap[action].length >= limit[action].max) return false;
+  rateLimitMap[action].push(now);
+  return true;
+}
+
+// ─── ANTI INSPECT ──────────────────────────────────
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if (e.key === 'F12' ||
+    (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) ||
+    (e.ctrlKey && ['U','S'].includes(e.key.toUpperCase()))) {
+    e.preventDefault(); return false;
+  }
+});
+(function detectDevTools() {
+  const threshold = 160;
+  setInterval(() => {
+    if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
+      if (isUnlocked) {
+        isUnlocked = false; isSpinning = false; currentCode = '';
+        spinBtn.disabled = true; unlockBtn.disabled = false; codeInput.disabled = false;
+        codeInput.value = ''; statusBadge.className = 'status-badge locked';
+        statusText.textContent = 'Masukkan kode untuk memulai';
+      }
+    }
+  }, 1000);
+})();
+
+
+// ─── EVENT EXPIRED & COUNTDOWN ─────────────────────
+const EVENT_EXPIRED = new Date('2026-04-10T23:59:59');
+
+function checkEventExpired() {
+  if (new Date() > EVENT_EXPIRED) {
+    document.getElementById('checkingOverlay').style.display = 'none';
+    document.getElementById('snkOverlay').style.display     = 'none';
+    document.getElementById('expiredOverlay').classList.add('show');
+    return true;
+  }
+  return false;
+}
+
+function updateCountdown() {
+  const diff = EVENT_EXPIRED - new Date();
+  if (diff <= 0) { checkEventExpired(); return; }
+  const days  = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const mins  = Math.floor((diff % (1000*60*60)) / (1000*60));
+  const secs  = Math.floor((diff % (1000*60)) / 1000);
+  document.getElementById('cdDays').textContent  = String(days).padStart(2,'0');
+  document.getElementById('cdHours').textContent = String(hours).padStart(2,'0');
+  document.getElementById('cdMins').textContent  = String(mins).padStart(2,'0');
+  document.getElementById('cdSecs').textContent  = String(secs).padStart(2,'0');
+}
+if (!checkEventExpired()) { updateCountdown(); setInterval(updateCountdown, 1000); }
+
+
+// ─── KONFIRMASI SPIN ───────────────────────────────
+function cancelSpin() { document.getElementById('confirmOverlay').classList.remove('show'); }
+
+async function confirmSpin() {
+  document.getElementById('confirmOverlay').classList.remove('show');
+  if (!isUnlocked || isSpinning) return;
+
+  // Re-validasi ke server sebelum spin
+  codeFeedback.className = 'code-feedback loading';
+  codeFeedback.textContent = '⏳ Memvalidasi...';
+  const recheck = await apiCall({ action: "check", code: currentCode });
+  if (!recheck.success) {
+    isUnlocked = false; spinBtn.disabled = true; unlockBtn.disabled = false;
+    codeInput.disabled = false; codeInput.value = '';
+    codeFeedback.className = 'code-feedback err';
+    codeFeedback.textContent = '✗ Kode tidak valid atau sudah digunakan!';
+    statusBadge.className = 'status-badge locked';
+    statusText.textContent = 'Masukkan kode untuk memulai';
+    currentCode = ''; return;
+  }
+  codeFeedback.textContent = ''; codeFeedback.className = 'code-feedback';
+  isSpinning = true; spinBtn.disabled = true;
+
+  const rand = Math.random() * TOTAL_WEIGHT;
+  let cumulative = 0, winnerIdx = 0;
+  for (let i = 0; i < PRIZES.length; i++) { cumulative += PRIZES[i].weight; if (rand < cumulative) { winnerIdx = i; break; } }
+  let sliceStart = 0;
+  for (let i = 0; i < winnerIdx; i++) sliceStart += (PRIZES[i].weight/TOTAL_WEIGHT)*Math.PI*2;
+  const sliceMid    = sliceStart + (PRIZES[winnerIdx].weight/TOTAL_WEIGHT)*Math.PI;
+  const spins       = (5+Math.floor(Math.random()*4))*Math.PI*2;
+  const targetAngle = currentAngle - (currentAngle%(Math.PI*2)) + spins + (Math.PI*1.5) - sliceMid;
+  const duration    = 4000 + Math.random()*1500;
+  const startTime   = performance.now();
+  const startAngle  = currentAngle;
+  function easeOut(t) { return 1-Math.pow(1-t,4); }
+  function animate(now) {
+    const t = Math.min((now-startTime)/duration, 1);
+    currentAngle = startAngle + (targetAngle-startAngle)*easeOut(t);
+    drawWheel(currentAngle);
+    if (t < 1) requestAnimationFrame(animate);
+    else { currentAngle = targetAngle%(Math.PI*2); isSpinning = false; finishSpin(winnerIdx); }
+  }
+  requestAnimationFrame(animate);
+}
+
+
+// ─── FORM NAMA ─────────────────────────────────────
+let pendingNamaCode  = '';
+let pendingNamaHadiah = '';
+
+async function submitNama() {
+  const nama = document.getElementById('namaInput').value.trim();
+  if (!nama) {
+    document.getElementById('namaInput').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('namaInput').style.borderColor = '', 1000);
+    return;
+  }
+  if (!pendingNamaCode) {
+    document.getElementById('namaSaved').textContent = '✗ Sesi tidak valid, tutup dan coba lagi';
+    document.getElementById('namaSaved').style.color = 'var(--red)';
+    document.getElementById('namaSaved').style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('namaSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳';
+
+  // Kirim nama ke server (update kolom E di Sheets)
+  await apiCall({ action: "savename", code: pendingNamaCode, nama });
+
+  // Update voucher tampilan
+  document.getElementById('voucherNama').textContent = nama;
+
+  // Tampilkan saved
+  document.getElementById('namaSaved').style.display = 'block';
+  btn.textContent = '✓';
+
+  // Update pesan WA dengan nama
+  const waBtn = document.getElementById('waBtn');
+  const expStr = document.getElementById('voucherExp').textContent;
+  const pesan = encodeURIComponent(
+    `Halo! Saya baru saja mendapatkan hadiah dari Spin & Win 🎉\n\n` +
+    `👤 Nama   : ${nama}\n` +
+    `🏆 Hadiah : ${pendingNamaHadiah}\n` +
+    `📅 Voucher berlaku hingga: ${expStr}\n\n` +
+    `Saya sudah screenshot voucher sebagai bukti. Mohon bantu proses klaim hadiah saya ya!`
+  );
+  waBtn.href = `https://wa.me/${WA_NUMBER}?text=${pesan}`;
+}
 
 // ─── START ─────────────────────────────────────────
 initCodes();
