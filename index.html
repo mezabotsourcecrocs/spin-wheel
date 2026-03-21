@@ -319,6 +319,10 @@
   /* ── EXPORT CSV BTN ──────────────────────────────── */
   .export-btn { width: 100%; padding: 10px 16px; border: 1px solid rgba(52,152,219,0.4); border-radius: 8px; background: rgba(52,152,219,0.08); color: #3498DB; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .export-btn:hover { background: rgba(52,152,219,0.15); transform: translateY(-1px); }
+
+  /* ── AUDIO CONTROL ───────────────────────────────── */
+  .audio-btn { position: fixed; bottom: 16px; left: 16px; z-index: 60; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,215,0,0.3); background: rgba(10,10,15,0.8); color: var(--gold); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); transition: all 0.2s; }
+  .audio-btn:hover { background: rgba(255,215,0,0.1); border-color: rgba(255,215,0,0.5); }
 </style>
 </head>
 <body>
@@ -502,6 +506,10 @@
   </div>
 </div>
 
+
+<!-- AUDIO CONTROL -->
+<button class="audio-btn" id="audioBtn" onclick="toggleMute()" title="Mute/Unmute">🔊</button>
+
 <div class="admin-secret-trigger" id="adminTrigger"></div>
 
 <div class="admin-login-overlay" id="adminLoginOverlay">
@@ -677,14 +685,17 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzzB4ntM1qopiYk02rZ1
 const ADMIN_PASSWORD = 'tegar'; // Ganti sesuai kebutuhan
 
 const PRIZES = [
-  { label: "🏆 Crocs Classic Clog 1pcs", color: "#FFD700", weight: 3,  emoji: "🏆" },
+  { label: "🏆 Crocs Classic Clog 1pcs", color: "#FFD700", weight: 0,  emoji: "🏆" },
   { label: "💰 THR 35RB",                  color: "#FF6B00", weight: 10, emoji: "💰" },
   { label: "🎁 Diskon 20RB",               color: "#FF3333", weight: 21, emoji: "🎁" },
   { label: "🎟️ Diskon 10RB",               color: "#9B59B6", weight: 34, emoji: "🎟️" },
-  { label: "😔 Coba Lagi",                 color: "#455A64", weight: 53, emoji: "😔" },
-  { label: "🔄 Re-Spin",                    color: "#1ABC9C", weight: 30,  emoji: "🔄" },
+  { label: "😔 Coba Lagi",                 color: "#455A64", weight: 61, emoji: "😔" },
+  { label: "🔄 Re-Spin",                    color: "#1ABC9C", weight: 25,  emoji: "🔄" },
 ];
-const TOTAL_WEIGHT = PRIZES.reduce((s, p) => s + p.weight, 0);
+const TOTAL_WEIGHT = PRIZES.filter(p => p.weight > 0).reduce((s, p) => s + p.weight, 0);
+// Untuk gambar roda: Crocs tetap tampil dengan slot visual 2
+const DRAW_PRIZES = PRIZES.map(p => p.weight === 0 ? {...p, weight: 4} : p);
+const TOTAL_WEIGHT_DRAW = DRAW_PRIZES.reduce((s, p) => s + p.weight, 0);
 
 let validCodes  = new Set();
 let usedCodes   = new Set();
@@ -813,8 +824,8 @@ function drawWheel(angle = 0) {
   const W = canvas.width, H = canvas.height, cx = W/2, cy = H/2, r = W/2 - 6;
   ctx.clearRect(0, 0, W, H);
   let start = angle;
-  PRIZES.forEach(prize => {
-    const slice = (prize.weight / TOTAL_WEIGHT) * Math.PI * 2;
+  DRAW_PRIZES.forEach(prize => {
+    const slice = (prize.weight / TOTAL_WEIGHT_DRAW) * Math.PI * 2;
     ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,start,start+slice); ctx.closePath();
     ctx.fillStyle = prize.color; ctx.fill();
     ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 2; ctx.stroke();
@@ -1009,15 +1020,20 @@ function showResult(prize, usedCodeForVoucher) {
   }
 
   document.getElementById('modal').classList.add('show');
-  if (!isTryAgain && !isReSpin) {
+  if (isReSpin) {
     launchConfetti();
-    // Haptic feedback normal
-    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-  }
-  if (isReSpin) launchConfetti();
-  // Jackpot effect untuk hadiah utama
-  if (JACKPOT_LABELS.includes(prize.label)) {
+    playReSpinSound();
+  } else if (isTryAgain) {
+    playLoseSound();
+  } else if (JACKPOT_LABELS.includes(prize.label)) {
+    launchConfetti();
     triggerJackpot();
+    playJackpotSound();
+    if (navigator.vibrate) navigator.vibrate([100,50,100,50,200,50,200]);
+  } else {
+    launchConfetti();
+    playWinSound();
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
   }
 }
 function closeModal() {
@@ -1200,6 +1216,8 @@ function startGame() {
   document.getElementById('snkOverlay').style.animation = 'fadeOut 0.3s ease forwards';
   setTimeout(() => {
     document.getElementById('snkOverlay').style.display = 'none';
+    // Mulai ambient setelah user interaksi (diperlukan browser)
+    startAmbient();
   }, 300);
 }
 
@@ -1299,22 +1317,39 @@ async function confirmSpin() {
 
   const rand = Math.random() * TOTAL_WEIGHT;
   let cumulative = 0, winnerIdx = 0;
-  for (let i = 0; i < PRIZES.length; i++) { cumulative += PRIZES[i].weight; if (rand < cumulative) { winnerIdx = i; break; } }
+  for (let i = 0; i < PRIZES.length; i++) { if (PRIZES[i].weight === 0) continue; cumulative += PRIZES[i].weight; if (rand < cumulative) { winnerIdx = i; break; } }
   let sliceStart = 0;
-  for (let i = 0; i < winnerIdx; i++) sliceStart += (PRIZES[i].weight/TOTAL_WEIGHT)*Math.PI*2;
-  const sliceMid    = sliceStart + (PRIZES[winnerIdx].weight/TOTAL_WEIGHT)*Math.PI;
+  for (let i = 0; i < winnerIdx; i++) sliceStart += (DRAW_PRIZES[i].weight/TOTAL_WEIGHT_DRAW)*Math.PI*2;
+  const sliceMid    = sliceStart + (DRAW_PRIZES[winnerIdx].weight/TOTAL_WEIGHT_DRAW)*Math.PI;
   const spins       = (5+Math.floor(Math.random()*4))*Math.PI*2;
   const targetAngle = currentAngle - (currentAngle%(Math.PI*2)) + spins + (Math.PI*1.5) - sliceMid;
   const duration    = 4000 + Math.random()*1500;
   const startTime   = performance.now();
   const startAngle  = currentAngle;
+  // Stop ambient sementara, mulai spin sound
+  stopAmbient();
+  const spinSnd = startSpinSound();
+  let lastT = 0;
+
   function easeOut(t) { return 1-Math.pow(1-t,4); }
   function animate(now) {
     const t = Math.min((now-startTime)/duration, 1);
     currentAngle = startAngle + (targetAngle-startAngle)*easeOut(t);
     drawWheel(currentAngle);
+    // Sesuaikan kecepatan tick dengan kecepatan roda
+    if (spinSnd && t > 0) {
+      const speed = Math.abs(currentAngle - (startAngle + (targetAngle-startAngle)*easeOut(lastT)));
+      const tickMs = Math.max(40, Math.min(300, 40 / (speed + 0.01)));
+      spinSnd.setSpeed(tickMs);
+    }
+    lastT = t;
     if (t < 1) requestAnimationFrame(animate);
-    else { currentAngle = targetAngle%(Math.PI*2); isSpinning = false; finishSpin(winnerIdx); }
+    else {
+      stopSpinSound();
+      currentAngle = targetAngle%(Math.PI*2); isSpinning = false; finishSpin(winnerIdx);
+      // Resume ambient setelah spin
+      setTimeout(() => { if (!isMuted) startAmbient(); }, 1000);
+    }
   }
   requestAnimationFrame(animate);
 }
@@ -1454,6 +1489,309 @@ function exportCSV() {
   link.download = `spinwheel-data-${tanggal}.csv`;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+
+// ─── AUDIO ENGINE ──────────────────────────────────
+let audioCtx = null;
+let isMuted  = false;
+let spinSoundNode = null;
+let spinGain = null;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  document.getElementById('audioBtn').textContent = isMuted ? '🔇' : '🔊';
+  if (spinGain) spinGain.gain.value = isMuted ? 0 : 0.3;
+  if (ambientGainNode) ambientGainNode.gain.value = isMuted ? 0 : 0.18;
+  if (isMuted) {
+    stopAmbient();
+  } else {
+    startAmbient();
+  }
+}
+
+// ── Suara roda berputar (tick-tick seperti kasino) ──
+function startSpinSound() {
+  if (isMuted) return;
+  const ctx = getAudioCtx();
+  stopSpinSound();
+
+  spinGain = ctx.createGain();
+  spinGain.gain.value = 0.3;
+  spinGain.connect(ctx.destination);
+
+  let tickInterval = 80; // ms antar tick (makin cepat = makin cepat roda)
+  let startTime = ctx.currentTime;
+
+  function scheduleTick() {
+    if (!spinSoundNode) return;
+    // Buat suara tick (klik kasino)
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.02, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.005));
+    }
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 800 + Math.random() * 400;
+    filter.Q.value = 2;
+    src.connect(filter);
+    filter.connect(spinGain);
+    src.start(startTime);
+    startTime += tickInterval / 1000;
+    // Percepat tick di awal, perlambat di akhir (diatur dari luar via tickInterval)
+    spinSoundNode = setTimeout(scheduleTick, tickInterval);
+  }
+
+  spinSoundNode = setTimeout(scheduleTick, 0);
+  return { setSpeed: (ms) => { tickInterval = ms; } };
+}
+
+function stopSpinSound() {
+  if (spinSoundNode) { clearTimeout(spinSoundNode); spinSoundNode = null; }
+}
+
+// ── Suara hasil ─────────────────────────────────────
+function playWinSound() {
+  if (isMuted) return;
+  const ctx = getAudioCtx();
+  // Fanfare kasino: do-mi-sol-do ascending
+  const notes = [523, 659, 784, 1047];
+  notes.forEach((freq, i) => {
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.12);
+    gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + i * 0.12 + 0.05);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + i * 0.12 + 0.25);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(ctx.currentTime + i * 0.12);
+    osc.stop(ctx.currentTime + i * 0.12 + 0.3);
+  });
+  // Tambah shimmer di akhir
+  setTimeout(() => {
+    for (let i = 0; i < 6; i++) {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 1047 + i * 200;
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.5);
+    }
+  }, 500);
+}
+
+function playLoseSound() {
+  if (isMuted) return;
+  const ctx = getAudioCtx();
+  // Descending sad trombone
+  const notes = [400, 350, 300, 250];
+  notes.forEach((freq, i) => {
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.15);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + i * 0.15 + 0.2);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(ctx.currentTime + i * 0.15);
+    osc.stop(ctx.currentTime + i * 0.15 + 0.25);
+  });
+}
+
+function playReSpinSound() {
+  if (isMuted) return;
+  const ctx = getAudioCtx();
+  // Ascending spiral
+  for (let i = 0; i < 8; i++) {
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 400 + i * 80;
+    gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.06);
+    gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + i * 0.06 + 0.04);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + i * 0.06 + 0.1);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(ctx.currentTime + i * 0.06);
+    osc.stop(ctx.currentTime + i * 0.06 + 0.15);
+  }
+}
+
+function playJackpotSound() {
+  if (isMuted) return;
+  const ctx = getAudioCtx();
+  // Dramatic jackpot fanfare
+  const melody = [523,523,523,784,659,523,784,1047];
+  const timing = [0,.15,.3,.45,.6,.75,.9,1.05];
+  melody.forEach((freq, i) => {
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, ctx.currentTime + timing[i]);
+    gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + timing[i] + 0.05);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + timing[i] + 0.18);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(ctx.currentTime + timing[i]);
+    osc.stop(ctx.currentTime + timing[i] + 0.2);
+  });
+}
+
+
+// ─── AMBIENT KASINO ────────────────────────────────
+let ambientNodes = [];
+let ambientGainNode = null;
+let ambientRunning = false;
+let chipInterval = null;
+let melodyInterval = null;
+
+function startAmbient() {
+  if (ambientRunning || isMuted) return;
+  ambientRunning = true;
+  const ctx = getAudioCtx();
+
+  // Master gain ambient (pelan, tidak ganggu)
+  ambientGainNode = ctx.createGain();
+  ambientGainNode.gain.value = 0;
+  ambientGainNode.connect(ctx.destination);
+  // Fade in pelan
+  ambientGainNode.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 3);
+
+  // ── 1. Bass drone (suara dasar kasino) ──
+  function makeDrone(freq, vol) {
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    filter.type = 'lowpass';
+    filter.frequency.value = 200;
+    gain.gain.value = vol;
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ambientGainNode);
+    osc.start();
+    ambientNodes.push(osc);
+  }
+  makeDrone(55, 0.4);   // bass rendah
+  makeDrone(82, 0.2);   // harmonik
+  makeDrone(110, 0.1);  // overtone
+
+  // ── 2. Melodi latar (loop chord kasino) ──
+  const chords = [
+    [261, 329, 392],  // C major
+    [293, 369, 440],  // D minor
+    [261, 329, 392],  // C major
+    [246, 311, 369],  // B dim
+  ];
+  let chordIdx = 0;
+
+  function playChord() {
+    if (!ambientRunning || isMuted) return;
+    const chord = chords[chordIdx % chords.length];
+    chord.forEach((freq, i) => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.3);
+      gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 1.5);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 2.5);
+      osc.connect(gain);
+      gain.connect(ambientGainNode);
+      osc.start();
+      osc.stop(ctx.currentTime + 2.8);
+    });
+    chordIdx++;
+  }
+
+  playChord();
+  melodyInterval = setInterval(() => {
+    if (ambientRunning && !isMuted) playChord();
+  }, 3000);
+
+  // ── 3. Suara chip kasino (random tap) ──
+  function playChip() {
+    if (!ambientRunning || isMuted) return;
+    const buf  = ctx.createBuffer(1, ctx.sampleRate * 0.05, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.008));
+    }
+    const src   = ctx.createBufferSource();
+    const gain  = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+    src.buffer = buf;
+    filter.type = 'highpass';
+    filter.frequency.value = 1500 + Math.random() * 1000;
+    gain.gain.value = 0.2 + Math.random() * 0.2;
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(ambientGainNode);
+    src.start();
+  }
+
+  // Chip random tiap 1-4 detik
+  function scheduleChip() {
+    if (!ambientRunning) return;
+    playChip();
+    chipInterval = setTimeout(scheduleChip, 1000 + Math.random() * 3000);
+  }
+  scheduleChip();
+
+  // ── 4. Hi-hat tipis (rhythm kasino) ──
+  let beat = 0;
+  const beatInterval = setInterval(() => {
+    if (!ambientRunning || isMuted) return;
+    beat++;
+    // Aksen di beat 1 dan 3
+    const isAccent = beat % 4 === 1 || beat % 4 === 3;
+    const buf  = ctx.createBuffer(1, ctx.sampleRate * 0.03, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.003));
+    }
+    const src   = ctx.createBufferSource();
+    const gain  = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+    src.buffer = buf;
+    filter.type = 'highpass';
+    filter.frequency.value = 8000;
+    gain.gain.value = isAccent ? 0.08 : 0.03;
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(ambientGainNode);
+    src.start();
+    ambientNodes.push(src);
+  }, 500); // 120 BPM
+  ambientNodes.push({ stop: () => clearInterval(beatInterval) });
+}
+
+function stopAmbient() {
+  ambientRunning = false;
+  if (chipInterval) { clearTimeout(chipInterval); chipInterval = null; }
+  if (melodyInterval) { clearInterval(melodyInterval); melodyInterval = null; }
+  if (ambientGainNode) {
+    ambientGainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1);
+    setTimeout(() => {
+      ambientNodes.forEach(n => { try { n.stop(); } catch(e){} });
+      ambientNodes = [];
+      ambientGainNode = null;
+    }, 1000);
+  }
 }
 
 // ─── START ─────────────────────────────────────────
